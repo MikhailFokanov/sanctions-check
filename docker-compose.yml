@@ -1,0 +1,11 @@
+version: "3.8"
+
+services:
+  elastic:
+    image: elasticsearch:7.10.1
+    restart: always
+    container_name: xthon_elastic
+    environment:
+      - discovery.type=single-node
+    ports:
+      - 9200:9200

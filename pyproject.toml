@@ -1,0 +1,16 @@
+[tool.poetry]
+name = "sanctions-check"
+version = "0.1.0"
+description = ""
+authors = ["leins275 <leins275@gmail.com>"]
+readme = "README.md"
+packages = [{include = "sanctions_check"}]
+
+[tool.poetry.dependencies]
+python = "^3.11"
+elasticsearch = "7.10.1"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
