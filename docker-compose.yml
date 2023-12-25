@@ -2,10 +2,12 @@ version: "3.8"
 
 services:
   elastic:
-    image: elasticsearch:7.10.1
+    image: elasticsearch:8.11.1
     restart: always
     container_name: xthon_elastic
     environment:
       - discovery.type=single-node
+      - xpack.security.enabled=false
+      - xpack.security.enrollment.enabled=false
     ports:
       - 9200:9200
