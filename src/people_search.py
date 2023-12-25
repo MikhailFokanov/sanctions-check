@@ -59,8 +59,7 @@ class PeopleSearch():
         for row in data:
             document = {
                 "index": {
-                    "_index": self.index_name, 
-                    "_type": "_doc"
+                    "_index": self.index_name
                 }
             }
             document.update(row)
