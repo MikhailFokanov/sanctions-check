@@ -37,6 +37,7 @@ def gpt_name_normalization(name):
 
 
 if __name__ == '__main__':
+    
     # question = 'В чём смысл жизни?'
     # response = gpt_chat_completion(question)
     # print(response)
