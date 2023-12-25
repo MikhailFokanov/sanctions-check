@@ -40,17 +40,13 @@ class PeopleSearch():
             },
             "mappings": {
                 "properties": {
-                    "person": {
+                    "name": {
                         "type": "text",
                         "analyzer": "name_analyzer",
-                        "fields": {
-                            "name": {
-                                "type": "keyword"
-                            },
-                            "id": {
-                                "type": "text"
-                            }
-                        }
+                    },
+                    "name_original": {
+                        "type": "text",
+                        "analyzer": "name_analyzer",
                     }
                 }
             }
