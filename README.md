@@ -1,20 +1,50 @@
 # sanctions-check
 
-## Local run
+# Features
+- load full names from csv
+- upload to elasticsearch
+- get normalized name from chatgpt
+- provide search of any name by substring
 
-You have to put csv file with data to the project root 
+# Local run
 
-1. run setup.sh to setup elasticsearch in docker-compose
-2. setup venv with poetry/pip
-3. to start project run `python upload.py`
+## 1. Provide source csv
+You have to put csv file with data to the project root. Project will read data from `20231213-FULL-1_1.csv`.
 
-## Plans
-- init: Проверяет, есть ли маппинг. Если нет - кладем маппинг.
-- 
+## 2. Setup python dependencies
 
-Entity_EU_ReferenceNumber - id
-NameAlias_WholeName - original_name
+> Project uses poetry by default.
 
-Произвольный из NameAlias_WholeName приводим к английскому
+```bash
+# With poetry
+poetry shell
+poetry install
 
-PUT /people{  "settings": {    "analysis": {      "analyzer": {        "name_analyzer": {          "type": "custom",          "tokenizer": "standard",          "filter": ["lowercase", "asciifolding"]        }      }    }  },  "mappings": {    "properties": {      "name": {        "type": "text",        "analyzer": "name_analyzer",        "fields": {          "keyword": {            "type": "keyword"          }        }      }    }  }}
+# With pip
+python -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+```
+
+## 3. Configure elasticsearch
+
+> Elasticsearch version and python client version sould match
+
+You have to have elasticsearch available on http://localhost:9200. You could use `setup.sh` script to 
+setup elasticsearch from scratch with `docker-compose`.
+
+## 4. Start project
+
+Just run: 
+```
+python main.py
+```
+
+You will be able to search any string patterns in cli.
+
+# Tips
+
+To export poetry requirements to requirements.txt you could run
+```bash
+poetry export --without-hashes --without dev -f requirements.txt -o requirements.txt
+```
