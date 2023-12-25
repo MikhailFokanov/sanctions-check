@@ -2,14 +2,25 @@ import sys
 from src.people_search import PeopleSearch
 
 def search_person(keyword):
+    parts = keyword.split()  # Split the keyword into parts
+    should_clauses = []
+
+    for part in parts:
+        should_clauses.append({
+            "match": {
+                "name": {
+                    "query": part,
+                    "fuzziness": 2
+                }
+            }
+        })
+
     query = {
         "query": {
-            "fuzzy": {
-                "name": {
-                    "value": keyword,
-                    "fuzziness": "AUTO"
-                }
-            } 
+            "bool": {
+                "should": should_clauses,
+                "minimum_should_match": len(parts)
+            }
         }
     }
     return query

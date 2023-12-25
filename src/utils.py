@@ -2,7 +2,7 @@ import csv
 
 def load_data(fname: str):
     data = {}
-    with open(fname, newline='') as source:
+    with open(fname, newline='', encoding="utf8") as source:
         rows = csv.DictReader(source, delimiter=';')
         for row in rows:
             id = row.get('Entity_LogicalId') or ""
