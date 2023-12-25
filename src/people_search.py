@@ -1,6 +1,6 @@
 from elasticsearch import Elasticsearch
 from elasticsearch.exceptions import NotFoundError
-from utils import load_data
+from src.utils import load_data
 
 
 class PeopleSearch():

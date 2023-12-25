@@ -1,4 +1,4 @@
-from people_search import PeopleSearch
+from src.people_search import PeopleSearch
 
 def search_person(last_name="", first_name="", middle_name=""):
     query = {
