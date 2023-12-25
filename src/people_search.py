@@ -40,12 +40,15 @@ class PeopleSearch():
             },
             "mappings": {
                 "properties": {
-                    "name": {
+                    "person": {
                         "type": "text",
                         "analyzer": "name_analyzer",
                         "fields": {
-                            "keyword": {
+                            "name": {
                                 "type": "keyword"
+                            },
+                            "id": {
+                                "type": "text"
                             }
                         }
                     }
@@ -71,4 +74,7 @@ class PeopleSearch():
             res = self.es.bulk(index=self.index_name, body=bulk_data, refresh=True)  
     
     def search(self, query):
-        pass
+        result = self.es.search(index=self.index_name, body=query)
+
+        for hit in result['hits']['hits']:
+            print(hit['_source'])

@@ -1,17 +1,15 @@
 import csv
 
 def load_data(fname: str):
-    data = []
+    data = {}
     with open(fname, newline='') as source:
         rows = csv.DictReader(source, delimiter=';')
         for row in rows:
-            last_name   = row.get('NameAlias_LastName') or ""
-            first_name  = row.get('NameAlias_FirstName') or ""
-            middle_name = row.get('NameAlias_MiddleName') or ""
-            if last_name or first_name or middle_name:
-                data.append({
-                    "last_name": last_name,
-                    "first_name": first_name, 
-                    "middle_name": middle_name
-                })
-    return data
+            id = row.get('Entity_LogicalId') or ""
+            name = row.get('NameAlias_WholeName') or ""
+            if id not in data:
+                data[id] = name
+            else:
+                data[id] = ' '.join([data[id], name])
+    data_arr = [{'id': key_id, 'name': data[key_id]} for key_id in data]
+    return data_arr
