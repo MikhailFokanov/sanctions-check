@@ -4,7 +4,7 @@ services:
   elastic:
     image: elasticsearch:8.11.1
     restart: always
-    container_name: xthon_elastic
+    container_name: sc_elastic
     environment:
       - discovery.type=single-node
       - xpack.security.enabled=false
