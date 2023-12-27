@@ -1,11 +1,28 @@
 import sys
+
+from src.gpt_call import gpt_name_normalization
 from src.people_search import PeopleSearch
 
 def search_person(keyword):
-    parts = keyword.split()  # Split the keyword into parts
+
+    normalized = gpt_name_normalization(keyword)
+
+    parts = normalized.split()  # Split the keyword into parts
     should_clauses = []
 
+    print("searching for name and normalized name: " + normalized)
+
     for part in parts:
+        should_clauses.append({
+            "match": {
+                "name_normalized": {
+                    "query": part,
+                }
+            }
+        })
+
+    name_split = keyword.split()
+    for part in name_split:
         should_clauses.append({
             "match": {
                 "name": {
@@ -19,7 +36,7 @@ def search_person(keyword):
         "query": {
             "bool": {
                 "should": should_clauses,
-                "minimum_should_match": len(parts)
+                "minimum_should_match": len(parts*2)
             }
         }
     }

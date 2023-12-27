@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+import ast
+import json
 import os
 import openai
 # from dotenv import load_dotenv, find_dotenv
@@ -7,18 +9,18 @@ import openai
 # openai.api_key = os.environ.get('GPT_API_KEY')
 # MODEL_NAME = os.getenv('GPT_MODEL', 'gpt-4')
 
-openai.api_key = 'GPT_API_KEY'
+openai.api_key = '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'
 MODEL_NAME = 'gpt-4'
 
 def gpt_chat_completion(prompt, model_name=MODEL_NAME, verbose=False):
     chat_completion = openai.ChatCompletion.create(model=model_name, messages=[{"role": "user", "content": prompt}])
-    if verbose: 
-        return chat_completion 
+    if verbose:
+        return chat_completion
     return chat_completion.choices[0].message.content
 
 def gpt_name_normalization(name):
-    prompt = f"Please provide english normalized name for {name}. The response MUST CONTAIN ONLY JSON LIKE THIS: ```'name': 'THE_ENGLISH_NAME_HERE'```"
-    response = gpt_chat_completion(prompt)
+    prompt = f"Please provide english normalized name for "+name+'. The response MUST CONTAIN ONLY JSON LIKE THIS:  {"name": "THE_ENGLISH_NAME_HERE"}'
+    response = json.loads(gpt_chat_completion(prompt))['name']
     return response
 
 # def gpt_response(prompt, model_name=MODEL_NAME, verbose=False):
@@ -37,7 +39,7 @@ def gpt_name_normalization(name):
 
 
 if __name__ == '__main__':
-    
+
     # question = 'В чём смысл жизни?'
     # response = gpt_chat_completion(question)
     # print(response)
@@ -55,7 +57,7 @@ if __name__ == '__main__':
     # openai.api_base = "https://ai-proxy.lab.epam.com"
 
     # deployment_name = "gpt-35-turbo"
-    
+
     # Please only use this one if you absolutely need it. It's slower and more expensive.
     # deployment_name = "gpt-4"
     # deployment_name = "gpt-4-32k"
@@ -63,7 +65,7 @@ if __name__ == '__main__':
     # For embeddings only, but small private models may perform better and cheaper
     # https://huggingface.co/spaces/mteb/leaderboard
     # deployment_name = "text-embedding-ada-002"
-    
+
     # message = "how are you?"
 
     # print(openai.ChatCompletion.create(
@@ -79,6 +81,6 @@ if __name__ == '__main__':
 
 
 
-    print(gpt_name_normalization("иванов иван иванович"))
+    #print(gpt_name_normalization("иванов иван иванович"))
 
     print(gpt_name_normalization("جهاد محمد سلطان"))

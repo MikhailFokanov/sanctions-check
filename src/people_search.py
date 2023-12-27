@@ -8,7 +8,8 @@ class PeopleSearch():
         self.source_fname = fname
         self.index_name = "people"
         self.es = Elasticsearch("http://localhost:9200")
-        self._setup_index()
+        #self._setup_index()
+        #self._load_data()
 
     def _setup_index(self):
         try:
@@ -17,7 +18,6 @@ class PeopleSearch():
                 print(f"The index '{self.index_name}' exists.")
             else:
                 self._create_index()
-                self._load_data()
         except NotFoundError:
             print(
                 f"The index '{self.index_name}' does not exist or the cluster is not reachable.")
@@ -45,7 +45,7 @@ class PeopleSearch():
                         "type": "text",
                         "analyzer": "name_analyzer",
                     },
-                    "name_original": {
+                    "name_normalized": {
                         "type": "text",
                         "analyzer": "name_analyzer",
                     }

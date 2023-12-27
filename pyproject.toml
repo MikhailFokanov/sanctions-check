@@ -9,6 +9,7 @@ packages = [{include = "sanctions_check"}]
 [tool.poetry.dependencies]
 python = "^3.11"
 elasticsearch = "^8.11.1"
+openai = "0.28.0"
 
 
 [build-system]

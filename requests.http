@@ -1,0 +1,30 @@
+###
+
+# curl -XPUT -H "Content-Type: application/json" http://localhost:9200/_cluster/settings -d '{ "transient": { "cluster.routing.allocation.disk.threshold_enabled": false } }'
+PUT http://127.0.0.1:9200/_cluster/settings
+Content-Type: application/json
+
+{
+  "transient": {
+    "cluster.routing.allocation.disk.threshold_enabled": false
+  }
+}
+
+###
+
+GET http://127.0.0.1:9200/people/_search
+
+###
+DELETE http://127.0.0.1:9200/people
+
+###
+# curl -XPUT -H "Content-Type: application/json" http://localhost:9200/_all/_settings -d '{"index.blocks.read_only_allow_delete": null}'
+PUT http://localhost:9200/_all/_settings
+Content-Type: application/json
+
+{
+  "index.blocks.read_only_allow_delete": null
+}
+
+###
+
