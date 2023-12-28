@@ -2,15 +2,23 @@
 import ast
 import json
 import os
+import ast
 import openai
+from langchain.prompts import PromptTemplate
 # from dotenv import load_dotenv, find_dotenv
 
 # _ = load_dotenv(find_dotenv('pdf_diff/diff/.env'))
 # openai.api_key = os.environ.get('GPT_API_KEY')
 # MODEL_NAME = os.getenv('GPT_MODEL', 'gpt-4')
 
-openai.api_key = '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'
+openai.api_key = 'INSERT_API_KEY'
 MODEL_NAME = 'gpt-4'
+
+TEMPLATES = [
+    "Please provide english normalized name for {original_name}. The response MUST CONTAIN ONLY JSON LIKE THIS: ('name': 'THE_ENGLISH_NAME_HERE')",
+    '''Please provide English normalized names for the following list of names: {original_name}. The response MUST CONTAIN ONLY JSON LIKE THIS: [(original_name: normalized_english_name)]'''
+]
+BULK_NAMES = ['محمد يحيى معل','صالح مسفر صالح الشاعر','Иван Иванов','Бойко Драгонов','محمود ابراهيم سعيد']
 
 def gpt_chat_completion(prompt, model_name=MODEL_NAME, verbose=False):
     chat_completion = openai.ChatCompletion.create(model=model_name, messages=[{"role": "user", "content": prompt}])
@@ -18,10 +26,44 @@ def gpt_chat_completion(prompt, model_name=MODEL_NAME, verbose=False):
         return chat_completion
     return chat_completion.choices[0].message.content
 
-def gpt_name_normalization(name):
-    prompt = f"Please provide english normalized name for "+name+'. The response MUST CONTAIN ONLY JSON LIKE THIS:  {"name": "THE_ENGLISH_NAME_HERE"}'
-    response = json.loads(gpt_chat_completion(prompt))['name']
+def gpt_name_normalization(orig_name, template = 0):
+    task = TEMPLATES[template]
+    prompt = PromptTemplate.from_template(task)
+    input_prompt = prompt.format(original_name=orig_name)
+    # import pdb; pdb.set_trace()
+    print(input_prompt)
+    response = ast.literal_eval(gpt_chat_completion(input_prompt))
+    # response = json.loads(gpt_chat_completion(input_prompt))['name']
+    # import pdb; pdb.set_trace()
     return response
+
+def gpt_bulk_conseq_handling(bulk, prompt = 0):
+    response = {}
+    for orig_name in bulk:
+        try:
+            result = gpt_name_normalization(orig_name, prompt)
+        except:
+            continue
+        # import pdb; pdb.set_trace()
+        response[orig_name] = result['name']
+    return response
+
+def gpt_bulk_parallel_handling(bulk, prompt = 1, retry = 3):
+    response = ''
+    result = {}
+    for i in range(0, retry):
+        i += 1
+        try:
+            response = gpt_name_normalization(str(bulk), prompt)
+            # print(response)
+        except:
+            print('oops')
+            continue
+        if response: break
+    for pair in [{item['original_name']: item['normalized_english_name']} for item in response]:
+        # import pdb; pdb.set_trace()
+        result.update(pair)
+    return result
 
 # def gpt_response(prompt, model_name=MODEL_NAME, verbose=False):
 #     response = gpt_chat_completion(prompt=prompt, model_name=model_name, verbose=verbose)
@@ -83,4 +125,8 @@ if __name__ == '__main__':
 
     #print(gpt_name_normalization("иванов иван иванович"))
 
-    print(gpt_name_normalization("جهاد محمد سلطان"))
+    # print(gpt_name_normalization("جهاد محمد سلطان"))
+
+    print(gpt_bulk_conseq_handling(BULK_NAMES, 0))
+    print('______________')
+    print(gpt_bulk_parallel_handling(BULK_NAMES, 1, 3))
