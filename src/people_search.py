@@ -1,13 +1,14 @@
 from elasticsearch import Elasticsearch
 from elasticsearch.exceptions import NotFoundError
 from src.utils import load_data
+from src.config import elastic_settings
 
 
 class PeopleSearch():
     def __init__(self, fname) -> None:
         self.source_fname = fname
         self.index_name = "people"
-        self.es = Elasticsearch("http://localhost:9200")
+        self.es = Elasticsearch(elastic_settings.ELASTIC_URL)
         #self._setup_index()
         #self._load_data()
 
