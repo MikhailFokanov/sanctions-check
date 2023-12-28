@@ -3,16 +3,13 @@ import ast
 import json
 import os
 import openai
-# from dotenv import load_dotenv, find_dotenv
+from src.config import openai_settings
 
-# _ = load_dotenv(find_dotenv('pdf_diff/diff/.env'))
-# openai.api_key = os.environ.get('GPT_API_KEY')
-# MODEL_NAME = os.getenv('GPT_MODEL', 'gpt-4')
 
-openai.api_key = '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'
-MODEL_NAME = 'gpt-4'
+openai.api_key = openai_settings.OPENAI_API_KEY
 
-def gpt_chat_completion(prompt, model_name=MODEL_NAME, verbose=False):
+
+def gpt_chat_completion(prompt, model_name=openai_settings.OPENAI_MODEL_NAME, verbose=False):
     chat_completion = openai.ChatCompletion.create(model=model_name, messages=[{"role": "user", "content": prompt}])
     if verbose:
         return chat_completion
