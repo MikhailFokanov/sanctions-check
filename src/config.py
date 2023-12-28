@@ -16,7 +16,7 @@ class PostgresSettings(BaseSettings):
 
     @property
     def db_uri(self):
-        return f'postgresql://{self.POSTGRES_USER_DB}:{self.POSTGRES_PASSWORD}@localhost:5432/{self.POSTGRES_USER_DB}'
+        return f'postgresql://{self.POSTGRES_USER}:{self.POSTGRES_PASSWORD}@localhost:5432/{self.POSTGRES_DB}'
 
 
 class OpenAISettings(BaseSettings):

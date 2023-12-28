@@ -1,24 +1,49 @@
 #!/usr/bin/env python3
 import ast
 import json
+import logging
 import os
 import openai
 from src.config import openai_settings
+from sqlalchemy import select
+from src.database.models import GPTResponse
 
 
-openai.api_key = openai_settings.OPENAI_API_KEY
+logging.basicConfig(level=logging.INFO,
+                    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s")
+
+class GPTNormalizer():
+    def __init__(self, db) -> None:
+        openai.api_key = openai_settings.OPENAI_API_KEY
+        self.db = db
+        
+    def _gpt_chat_completion(self, prompt, model_name=openai_settings.OPENAI_MODEL_NAME, verbose=False):
+        chat_completion = openai.ChatCompletion.create(model=model_name, messages=[{"role": "user", "content": prompt}])
+        if verbose:
+            return chat_completion
+        return chat_completion.choices[0].message.content
+
+    def _get_cached_normalization(self, name):
+        res = self.db.sql_query(query=select(GPTResponse).where(GPTResponse.keyword == name))
+        if res:
+            return res.normalized
+        return None
 
 
-def gpt_chat_completion(prompt, model_name=openai_settings.OPENAI_MODEL_NAME, verbose=False):
-    chat_completion = openai.ChatCompletion.create(model=model_name, messages=[{"role": "user", "content": prompt}])
-    if verbose:
-        return chat_completion
-    return chat_completion.choices[0].message.content
+    def gpt_name_normalize(self, name):
+        cached_normalization = self._get_cached_normalization(name)
 
-def gpt_name_normalization(name):
-    prompt = f"Please provide english normalized name for "+name+'. The response MUST CONTAIN ONLY JSON LIKE THIS:  {"name": "THE_ENGLISH_NAME_HERE"}'
-    response = json.loads(gpt_chat_completion(prompt))['name']
-    return response
+        if cached_normalization:
+            logging.info(f'{name} - normalization is in cache')
+            return cached_normalization
+        else:
+            logging.info(f'{name} - normalization is not in cache, requesting by api')
+            prompt = f"Please provide english normalized name for "+name+'. The response MUST CONTAIN ONLY JSON LIKE THIS:  {"name": "THE_ENGLISH_NAME_HERE"}'
+            normalized = json.loads(self._gpt_chat_completion(prompt))['name']
+            self.db.create_object(model_class=GPTResponse,
+                                  keyword=name,
+                                  normalized=normalized)
+            return normalized
 
 # def gpt_response(prompt, model_name=MODEL_NAME, verbose=False):
 #     response = gpt_chat_completion(prompt=prompt, model_name=model_name, verbose=verbose)
