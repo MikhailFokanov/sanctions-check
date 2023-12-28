@@ -33,7 +33,17 @@ pip install -r requirements.txt
 You have to have elasticsearch available on http://localhost:9200. You could use `setup.sh` script to 
 setup elasticsearch from scratch with `docker-compose`.
 
-## 4. Start project
+## 4. Configure environment variables
+Create `.env` file in the project root with the following content
+```dotenv
+POSTGRES_USER=sc
+POSTGRES_DB=sc
+POSTGRES_PASSWORD=123
+ELASTIC_URL=http://localhost:9200
+OPENAI_API_KEY=sk-123
+```
+
+## 5. Start project
 
 Just run: 
 ```

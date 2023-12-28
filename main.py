@@ -1,55 +1,35 @@
-import sys
+import logging 
 
-from src.gpt_call import gpt_name_normalization
 from src.people_search import PeopleSearch
+from src.database.db import Database
+from src.database.models import Base
+from src.config import postgres_settings
 
-def search_person(keyword):
 
-    normalized = gpt_name_normalization(keyword)
+db = Database(db_url=postgres_settings.db_uri)
+ps = PeopleSearch("20231213-FULL-1_1.csv", db)
 
-    parts = normalized.split()  # Split the keyword into parts
-    should_clauses = []
+logging.basicConfig(level=logging.INFO,
+                    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s")
 
-    print("searching for name and normalized name: " + normalized)
 
-    for part in parts:
-        should_clauses.append({
-            "match": {
-                "name_normalized": {
-                    "query": part,
-                }
-            }
-        })
-
-    name_split = keyword.split()
-    for part in name_split:
-        should_clauses.append({
-            "match": {
-                "name": {
-                    "query": part,
-                    "fuzziness": 2
-                }
-            }
-        })
-
-    query = {
-        "query": {
-            "bool": {
-                "should": should_clauses,
-                "minimum_should_match": len(parts*2)
-            }
-        }
-    }
-    return query
+def search_pattern():
+    pattern = input('Input any name part to search: ')
+    print(f'------------- Search results for pattern: {pattern} -------------')
+    ps.search(pattern)
 
 
 def main():
-    ps = PeopleSearch("20231213-FULL-1_1.csv")
-    while True:
-        search_pattern = input('Input any name part to search: ')
-        query = search_person(search_pattern)
-        print(f'------------- search result for pattern: {search_pattern} -------------')
-        ps.search(query)
+    try:
+        db.connect()
+        db.create_tables(Base)
+
+        while True:
+            search_pattern()
+    except Exception as e:
+        logging.error(e)
+    finally:
+        db.disconnect()
 
 
 if __name__ == "__main__":
