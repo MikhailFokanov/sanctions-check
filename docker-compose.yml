@@ -11,3 +11,14 @@ services:
       - xpack.security.enrollment.enabled=false
     ports:
       - 9200:9200
+  postgres:
+    image: postgres:14
+    restart: always
+    container_name: sc_postgres
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER_DB}
+      - POSTGRES_DB=${POSTGRES_USER_DB}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+    ports:
+      - 5432:5432 
+
