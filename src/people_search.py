@@ -86,21 +86,21 @@ class PeopleSearch():
 
         with open(fname, newline='', encoding="utf8") as source:
             rows = csv.DictReader(source, delimiter=';')
-            i = -1
-            for row in rows:
-                i+=1
+            for i, row in enumerate(rows):
+                if start_idx <= i <= end_idx or name == "":
+                    continue
                 id = row.get('Entity_LogicalId') or ""
                 name = row.get('NameAlias_WholeName') or ""
-                if i not in range(start_idx, end_idx) or name == "":
-                    continue
                 if id not in data:
                     data[id] = [ name ]
                 elif name:
                     data[id].append(name)
+
         data_arr = []
         for key_id in data:
             normalized_name = self.gpt_normalizer.gpt_name_normalize(data[key_id][0])
             data_arr.append({'id': key_id, 'name': data[key_id], 'name_normalized': normalized_name})
+
         return data_arr
 
     def search(self, search_pattern):
