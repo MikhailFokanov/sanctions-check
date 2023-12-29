@@ -58,7 +58,7 @@ class GPTNormalizer():
             input_prompt = prompt.format(original_name=name)
             # import pdb; pdb.set_trace()
             print(input_prompt)
-            response = ast.literal_eval(gpt_chat_completion(input_prompt))
+            response = ast.literal_eval(self._gpt_chat_completion(input_prompt))
             # response = json.loads(gpt_chat_completion(input_prompt))['name']
             # import pdb; pdb.set_trace()
             return response
