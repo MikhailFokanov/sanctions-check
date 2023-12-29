@@ -7,7 +7,7 @@ from src.config import postgres_settings
 
 
 db = Database(db_url=postgres_settings.db_uri)
-ps = PeopleSearch("20231213-FULL-1_1.csv", db)
+ps = PeopleSearch("20231213-FULL-1_1.csv", db, parse_data=False)
 
 logging.basicConfig(level=logging.INFO,
                     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s")

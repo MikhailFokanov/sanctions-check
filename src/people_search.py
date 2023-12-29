@@ -10,7 +10,7 @@ from src.gpt_call import GPTNormalizer
 
 
 class PeopleSearch():
-    def __init__(self, fname, db) -> None:
+    def __init__(self, fname, db, parse_data=False) -> None:
         self.source_fname = fname
         self.index_name = "people"
         self.db = db
@@ -19,6 +19,10 @@ class PeopleSearch():
         self.gpt_normalizer = GPTNormalizer(db)
 
         self._setup_index()
+        if parse_data:
+            data = self._data_parse(self.source_fname)
+            self._upload_data_to_elastic(data)
+
 
     def _setup_index(self):
         try:
@@ -27,8 +31,6 @@ class PeopleSearch():
                 logging.info(f"The index '{self.index_name}' exists.")
             else:
                 self._create_index()
-                data = self._data_parse(self.source_fname)
-                self._upload_data_to_elastic(data)
         except NotFoundError:
             logging.error(
                 f"The index '{self.index_name}' does not exist or the cluster is not reachable.")
