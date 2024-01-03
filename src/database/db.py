@@ -6,11 +6,16 @@ from sqlalchemy.engine.reflection import Inspector
 from sqlalchemy.engine import Engine
 from sqlalchemy.orm import sessionmaker
 
+from .models import Base 
+
 
 class Database:
     def __init__(self, db_url: str):
         self.__db_url: Optional[str] = db_url
         self.engine: Optional[Engine] = None
+
+        self.connect()
+        self.create_tables(Base)
 
     def __new__(cls, *args, **kwargs):
         if not hasattr(cls, 'instance'):

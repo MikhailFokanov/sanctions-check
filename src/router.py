@@ -15,8 +15,8 @@ main_router = APIRouter(
 
 
 @main_router.get("/search")
-async def search_person(pattern, ps: PeopleSearch = Depends(get_search_obj)):        
-    res = ps.search(pattern)
+async def search_person(name="", address="", ps: PeopleSearch = Depends(get_search_obj)):        
+    res = ps.search(name, address)
     logger.info(res)
     return {"message": res} 
 
@@ -24,6 +24,6 @@ async def search_person(pattern, ps: PeopleSearch = Depends(get_search_obj)):
 @main_router.get("/history")
 async def get_previous_search_results(pattern, db: Database = Depends(get_db)):
     '''This function returns all search requests logged at search_log db table. '''
-    query = select(SearchLog).where(SearchLog.search_pattern.like(f'%{pattern}%'))
+    query = select(SearchLog).where(SearchLog.name_search_pattern.like(f'%{pattern}%'))
     res = db.sql_query(query=query, single=False)
     return {"message": "success", "data": res} 

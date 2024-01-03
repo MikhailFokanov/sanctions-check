@@ -5,6 +5,7 @@ class ElasticSettings(BaseSettings):
     model_config = SettingsConfigDict(env_file=".env", extra='ignore')
 
     ELASTIC_URL: str
+    FORCE_LOAD_DATA: bool = False
 
 
 class PostgresSettings(BaseSettings):

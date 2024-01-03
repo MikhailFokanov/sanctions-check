@@ -3,7 +3,7 @@ from .people_search import PeopleSearch
 
 
 db = get_db()
-ps = PeopleSearch("20231213-FULL-1_1.csv", db, parse_data=False)
+ps = PeopleSearch("20231213-FULL-1_1.csv", db)
 
 
 def get_search_obj():

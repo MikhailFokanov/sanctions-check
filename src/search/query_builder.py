@@ -2,15 +2,16 @@ from loguru import logger
 
 
 class QueryBuilder():
-    def __init__(self, keyword: str, normalized: str) -> None:
-        self.keyword = keyword
+    def __init__(self, name_keyword: str, address_keyword: str, normalized: str) -> None:
+        self.name_keyword = name_keyword
+        self.address_keyword = address_keyword
         self.normalized = normalized
 
     def get_search_person_query(self):
         parts = self.normalized.split()  # Split the keyword into parts
         should_clauses = []
 
-        logger.info(f"Searching for name: {self.keyword} and normalized name: {self.normalized}")
+        logger.info(f"Searching for name: {self.name_keyword} and normalized name: {self.normalized}")
 
         for part in parts:
             should_clauses.append({
@@ -21,11 +22,22 @@ class QueryBuilder():
                 }
             })
 
-        name_split = self.keyword.split()
+        name_split = self.name_keyword.split()
         for part in name_split:
             should_clauses.append({
                 "match": {
                     "name": {
+                        "query": part,
+                        "fuzziness": 2
+                    }
+                }
+            })
+        
+        address_split = self.address_keyword.split()
+        for part in address_split:
+            should_clauses.append({
+                "match": {
+                    "address": {
                         "query": part,
                         "fuzziness": 2
                     }
@@ -40,4 +52,5 @@ class QueryBuilder():
                 }
             }
         }
+
         return query

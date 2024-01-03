@@ -9,8 +9,15 @@ from src.database.models import SearchLog, GPTResponse
 from src.gpt_call import GPTNormalizer
 
 
+def parse_address(row):
+    address_city = row.get('Address_City') or ""
+    address_street = row.get('Address_Street') or ""
+
+    return ", ".join([x for x in [address_city, address_street] if x])
+
+
 class PeopleSearch():
-    def __init__(self, fname, db, parse_data=False) -> None:
+    def __init__(self, fname, db) -> None:
         self.source_fname = fname
         self.index_name = "people"
         self.db = db
@@ -19,7 +26,7 @@ class PeopleSearch():
         self.gpt_normalizer = GPTNormalizer(db)
 
         self._setup_index()
-        if parse_data:
+        if elastic_settings.FORCE_LOAD_DATA:
             data = self._data_parse(self.source_fname)
             self._upload_data_to_elastic(data)
 
@@ -31,6 +38,8 @@ class PeopleSearch():
                 logger.info(f"The index '{self.index_name}' exists.")
             else:
                 self._create_index()
+                data = self._data_parse(self.source_fname)
+                self._upload_data_to_elastic(data)
         except NotFoundError:
             logger.error(
                 f"The index '{self.index_name}' does not exist or the cluster is not reachable.")
@@ -57,6 +66,10 @@ class PeopleSearch():
                     "name_normalized": {
                         "type": "text",
                         "analyzer": "name_analyzer",
+                    },
+                    "address": {
+                        "type": "text",
+                        "analyzer": "name_analyzer"
                     }
                 }
             }
@@ -80,32 +93,43 @@ class PeopleSearch():
                                refresh=True)
 
     def _data_parse(self, fname: str):
-        start_idx = 12840
+        start_idx = 12745 # 12840
         end_idx = 12880
         data = {}
 
         with open(fname, newline='', encoding="utf8") as source:
             rows = csv.DictReader(source, delimiter=';')
             for i, row in enumerate(rows):
-                if start_idx <= i <= end_idx or name == "":
+                if i < start_idx or i > end_idx:
                     continue
                 id = row.get('Entity_LogicalId') or ""
                 name = row.get('NameAlias_WholeName') or ""
+                address = parse_address(row)
                 if id not in data:
-                    data[id] = [ name ]
+                    data[id] = {}
+                    data[id]['name'] = [ name ]
+                    data[id]['address'] = [ address ]
                 elif name:
-                    data[id].append(name)
+                    data[id]['name'].append(name)
+                elif address:
+                    data[id]['address'].append(address)
 
         data_arr = []
         for key_id in data:
-            normalized_name = self.gpt_normalizer.gpt_name_normalize(data[key_id][0])
-            data_arr.append({'id': key_id, 'name': data[key_id], 'name_normalized': normalized_name})
+            rnd_name_alias = data[key_id]['name'][0]
+            normalized_name = self.gpt_normalizer.gpt_name_normalize(rnd_name_alias)
+            data_arr.append({
+                    'id': key_id,
+                    'name': data[key_id]['name'],
+                    'address': data[key_id]['address'],
+                    'name_normalized': normalized_name
+                    })
 
         return data_arr
 
-    def search(self, search_pattern):
-        normalized_pattern = self.gpt_normalizer.gpt_name_normalize(search_pattern)
-        qb = QueryBuilder(search_pattern, normalized_pattern)
+    def search(self, name_search_pattern, address_search_pattern=""):
+        normalized_pattern = self.gpt_normalizer.gpt_name_normalize(name_search_pattern)
+        qb = QueryBuilder(name_search_pattern, address_search_pattern, normalized_pattern)
         query = qb.get_search_person_query()
 
         result = self.es.search(index=self.index_name, body=query)
@@ -116,7 +140,8 @@ class PeopleSearch():
         
         self.db.create_object(model_class=SearchLog, 
                               index=self.index_name,
-                              search_pattern=search_pattern,
+                              name_search_pattern=name_search_pattern,
+                              address_search_pattern=address_search_pattern,
                               n_results=len(hits),
                               search_query=query, 
                               search_result=hits)
