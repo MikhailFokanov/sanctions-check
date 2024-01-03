@@ -13,6 +13,8 @@ class SearchLog(Base):
 
     id: Mapped[int] = mapped_column(primary_key=True)
     create_date: Mapped[datetime] = mapped_column(server_default=func.now()) 
+    search_pattern: Mapped[str] = mapped_column(nullable=False)
+    n_results: Mapped[int] = mapped_column(nullable=False)
     index: Mapped[str] = mapped_column(nullable=False)
     search_query: Mapped[dict] = mapped_column(JSON, nullable=True)
     search_result: Mapped[list] = mapped_column(ARRAY(JSON), nullable=True)
