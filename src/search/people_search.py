@@ -116,6 +116,8 @@ class PeopleSearch():
         
         self.db.create_object(model_class=SearchLog, 
                               index=self.index_name,
+                              search_pattern=search_pattern,
+                              n_results=len(hits),
                               search_query=query, 
                               search_result=hits)
 
