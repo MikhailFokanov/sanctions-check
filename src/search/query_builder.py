@@ -48,7 +48,7 @@ class QueryBuilder():
             "query": {
                 "bool": {
                     "should": should_clauses,
-                    "minimum_should_match": len(parts*2)
+                    "minimum_should_match": 1 #len(parts*2)
                 }
             }
         }
