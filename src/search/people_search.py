@@ -1,10 +1,10 @@
 import csv
-import logging
+from loguru import logger
 from elasticsearch import Elasticsearch
 from elasticsearch.exceptions import NotFoundError
 
 from src.config import elastic_settings
-from src.query_builder import QueryBuilder
+from src.search.query_builder import QueryBuilder
 from src.database.models import SearchLog, GPTResponse
 from src.gpt_call import GPTNormalizer
 
@@ -28,11 +28,11 @@ class PeopleSearch():
         try:
             exists = self.es.indices.exists(index=self.index_name)
             if exists:
-                logging.info(f"The index '{self.index_name}' exists.")
+                logger.info(f"The index '{self.index_name}' exists.")
             else:
                 self._create_index()
         except NotFoundError:
-            logging.error(
+            logger.error(
                 f"The index '{self.index_name}' does not exist or the cluster is not reachable.")
 
     def _create_index(self):
@@ -112,10 +112,11 @@ class PeopleSearch():
         hits = []
 
         for hit in result['hits']['hits']:
-            print(hit['_source'])
             hits.append(hit['_source'])
         
         self.db.create_object(model_class=SearchLog, 
                               index=self.index_name,
                               search_query=query, 
                               search_result=hits)
+
+        return hits

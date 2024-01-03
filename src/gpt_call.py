@@ -1,17 +1,15 @@
 #!/usr/bin/env python3
 import ast
 import json
-import logging
 import os
 import ast
 import openai
+from loguru import logger
 from src.config import openai_settings
 from sqlalchemy import select
 from src.database.models import GPTResponse
 from langchain.prompts import PromptTemplate
 
-logging.basicConfig(level=logging.INFO,
-                    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s")
 
 TEMPLATES = [
     "Please provide english normalized name for {original_name}. The response MUST CONTAIN ONLY JSON LIKE THIS: ('name': 'THE_ENGLISH_NAME_HERE')",
@@ -42,26 +40,26 @@ class GPTNormalizer():
         cached_normalization = self._get_cached_normalization(name)
 
         if cached_normalization:
-            logging.info(f'{name} - normalization is in cache')
+            logger.info(f'{name} - normalization is in cache')
             return cached_normalization
         else:
-            #logging.info(f'{name} - normalization is not in cache, requesting by api')
-            #prompt = f"Please provide english normalized name for "+name+'. The response MUST CONTAIN ONLY JSON LIKE THIS:  {"name": "THE_ENGLISH_NAME_HERE"}'
-            #normalized = json.loads(self._gpt_chat_completion(prompt))['name']
-            #self.db.create_object(model_class=GPTResponse,
-            #                      keyword=name,
-            #                      normalized=normalized)
-            #return normalized
+            logger.info(f'{name} - normalization is not in cache, requesting by api')
+            prompt = f"Please provide english normalized name for "+name+'. The response MUST CONTAIN ONLY JSON LIKE THIS:  {"name": "THE_ENGLISH_NAME_HERE"}'
+            normalized = json.loads(self._gpt_chat_completion(prompt))['name']
+            self.db.create_object(model_class=GPTResponse,
+                                  keyword=name,
+                                  normalized=normalized)
+            return normalized
             
-            task = TEMPLATES[template]
-            prompt = PromptTemplate.from_template(task)
-            input_prompt = prompt.format(original_name=name)
+            #task = TEMPLATES[template]
+            #prompt = PromptTemplate.from_template(task)
+            #input_prompt = prompt.format(original_name=name)
             # import pdb; pdb.set_trace()
-            print(input_prompt)
-            response = ast.literal_eval(self._gpt_chat_completion(input_prompt))
+            #print(input_prompt)
+            #response = ast.literal_eval(self._gpt_chat_completion(input_prompt))
             # response = json.loads(gpt_chat_completion(input_prompt))['name']
             # import pdb; pdb.set_trace()
-            return response
+            #return response
             
 def gpt_bulk_conseq_handling(bulk, prompt = 0):
     response = {}

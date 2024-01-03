@@ -1,3 +1,6 @@
+from loguru import logger
+
+
 class QueryBuilder():
     def __init__(self, keyword: str, normalized: str) -> None:
         self.keyword = keyword
@@ -7,7 +10,7 @@ class QueryBuilder():
         parts = self.normalized.split()  # Split the keyword into parts
         should_clauses = []
 
-        print(f"Searching for name: {self.keyword} and normalized name: {self.normalized}")
+        logger.info(f"Searching for name: {self.keyword} and normalized name: {self.normalized}")
 
         for part in parts:
             should_clauses.append({

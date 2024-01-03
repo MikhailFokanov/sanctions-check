@@ -1,4 +1,4 @@
-import logging
+from loguru import logger
 from typing import Optional
 
 from sqlalchemy import select, create_engine
@@ -21,7 +21,7 @@ class Database:
         if not self._check_tables_exist(base):
             base.metadata.create_all(self.engine)
         else:
-            logging.info("Tables already created")
+            logger.info("Tables already created")
 
     def _check_tables_exist(self, base):
         inspector = Inspector.from_engine(self.engine)
@@ -36,14 +36,14 @@ class Database:
         self.session = Session()
         try:
             self.sql_query(query=select(1))
-            logging.info("Database connected")
+            logger.info("Database connected")
         except Exception as e:
-            logging.error(f"Database didn't connect, error {e}")
+            logger.error(f"Database didn't connect, error {e}")
 
     def disconnect(self):
         if self.engine:
             self.engine.dispose()
-            logging.info("Database has disconnected")
+            logger.info("Database has disconnected")
 
     def create_object(self, model_class, **attributes):
         obj = model_class(**attributes)
