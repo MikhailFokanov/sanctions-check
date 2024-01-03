@@ -13,7 +13,7 @@ def parse_address(row):
     address_city = row.get('Address_City') or ""
     address_street = row.get('Address_Street') or ""
 
-    return ", ".join([x for x in [address_city, address_street] if x])
+    return ",".join([x for x in [address_city, address_street] if x])
 
 
 class PeopleSearch():
@@ -53,6 +53,17 @@ class PeopleSearch():
                             "type": "custom",
                             "tokenizer": "standard",
                             "filter": ["lowercase", "asciifolding"]
+                        },
+                        "address_analyzer": {
+                            "type": "custom",
+                            "tokenizer": "comma_tokenizer",
+                            "filter": ["lowercase", "asciifolding", "trim"]
+                        }
+                    },
+                     "tokenizer": {
+                        "comma_tokenizer": {
+                            "type": "pattern",
+                            "pattern": ","  # Use a comma as the delimiter
                         }
                     }
                 }
@@ -69,7 +80,7 @@ class PeopleSearch():
                     },
                     "address": {
                         "type": "text",
-                        "analyzer": "name_analyzer"
+                        "analyzer": "address_analyzer"
                     }
                 }
             }
