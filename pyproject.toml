@@ -19,6 +19,7 @@ uvicorn = "^0.25.0"
 loguru = "^0.7.2"
 ipython = "^8.19.0"
 black = "^23.12.1"
+mypy = "^1.8.0"
 
 
 [build-system]
