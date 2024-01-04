@@ -22,12 +22,31 @@ async def search_person(name="", address="", ps: PeopleSearch = Depends(get_sear
 
 
 @main_router.get("/history")
-async def get_previous_search_results(name_pattern="", address_pattern="", db: Database = Depends(get_db)):
+async def get_previous_search_results(name_pattern="", address_pattern="", return_result=False, db: Database = Depends(get_db)):
     '''This function returns all search requests logged at search_log db table. '''
-    query = select(SearchLog).where(
-        or_(
+    requested_fields = [
+        SearchLog.id,
+        SearchLog.create_date,
+        SearchLog.name_search_pattern,
+        SearchLog.address_search_pattern,
+        SearchLog.n_results,
+        SearchLog.index
+    ]
+    if return_result:
+        requested_fields.append(SearchLog.search_result)
+
+    if name_pattern and address_pattern:
+        select_condition = or_(
             SearchLog.name_search_pattern.like(f'%{name_pattern}%'),
             SearchLog.address_search_pattern.like(f'%{address_pattern}%'),
-            ))
-    res = db.sql_query(query=query, single=False)
+            )
+    elif name_pattern:
+        select_condition = SearchLog.name_search_pattern.like(f'%{name_pattern}%')
+    elif address_pattern:
+        select_condition = SearchLog.address_search_pattern.like(f'%{address_pattern}%')
+
+    # *tuple(requested_fields)
+    query = select(SearchLog.address_search_pattern, SearchLog.n_results, SearchLog.index).where(select_condition)
+    res = db.sql_query(query=query)
+    logger.info(res)
     return {"message": "success", "data": res} 

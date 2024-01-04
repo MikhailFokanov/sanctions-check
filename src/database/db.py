@@ -56,8 +56,7 @@ class Database:
         self.session.commit()
         return obj
 
-    def sql_query(self, query, single: bool = True, is_update: bool = False):
+    def sql_query(self, query):
         result = self.session.execute(query)
-        if not is_update:
-            return result.scalars().first() if single else result.scalars().all()
-        self.session.commit()
+        # return [dict(row) for row in result.fetchall()]
+        return [{key: value for key, value in row.items()} for row in result]
