@@ -7,7 +7,8 @@ from src.config import elastic_settings
 from src.search.query_builder import QueryBuilder
 from src.database.models import SearchLog
 from src.llm.llama_normalizer import LlamaNormalizer
-from src.llm.normalizer_interface import Normalizer
+from src.llm.gpt_normalizer import GPTNormalizer
+from src.llm.abstract_normalizer import Normalizer
 
 
 def parse_address(row):
@@ -24,6 +25,7 @@ class PeopleSearch:
         self.db = db
 
         self.es = Elasticsearch(elastic_settings.ELASTIC_URL)
+        # self.normalizer: Normalizer = GPTNormalizer(db)
         self.normalizer: Normalizer = LlamaNormalizer(db)
 
         self._setup_index()

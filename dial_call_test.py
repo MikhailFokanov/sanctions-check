@@ -1,12 +1,13 @@
 import openai
+from src.config import gpt_settings
 
 openai.api_type = "azure"
 openai.api_version = "2023-03-15-preview"
-openai.api_key = ""
+openai.api_key = gpt_settings.OPENAI_API_KEY
 openai.api_base = "https://ai-proxy.lab.epam.com"
 
-# deployment_name = "gpt-35-turbo"
-deployment_name = "Llama-2-70B-chat-AWQ"
+deployment_name = "gpt-35-turbo"
+# deployment_name = "Llama-2-70B-chat-AWQ"
 # Please only use this one if you absolutely need it. It's slower and more expensive.
 # deployment_name = "gpt-4"
 # deployment_name = "gpt-4-32k"
