@@ -10,6 +10,7 @@ class QueryBuilder():
     def get_search_person_query(self):
         parts = self.normalized.split()  # Split the keyword into parts
         should_clauses = []
+        min_should_match = 1 # len(parts)*2
 
         logger.info(f"Searching for name: {self.name_keyword} and normalized name: {self.normalized}")
 
@@ -41,15 +42,15 @@ class QueryBuilder():
                     }
                 }
             })
-        
+            # min_should_match += 1
 
         query = {
             "query": {
                 "bool": {
                     "should": should_clauses,
-                    "minimum_should_match": 1 #len(parts*2)
+                    "minimum_should_match": min_should_match
                 }
             }
         }
-
+        logger.info(query)
         return query
