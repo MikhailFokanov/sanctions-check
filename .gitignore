@@ -4,3 +4,4 @@
 *.env
 sanction_env/*
 *.json
+.mypy_cache
