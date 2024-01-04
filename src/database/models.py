@@ -21,8 +21,8 @@ class SearchLog(Base):
     search_result: Mapped[list] = mapped_column(ARRAY(JSON), nullable=True)
 
 
-class GPTResponse(Base):
-    __tablename__ = "gpt_response"
+class LLMResponse(Base):
+    __tablename__ = "llm_response"
 
     id: Mapped[int] = mapped_column(primary_key=True)
     create_date: Mapped[datetime] = mapped_column(server_default=func.now())
