@@ -33,16 +33,14 @@ class QueryBuilder():
                 }
             })
         
-        address_split = self.address_keyword.split()
-        for part in address_split:
-            should_clauses.append({
-                "match": {
-                    "address": {
-                        "query": part,
-                        "fuzziness": 2
-                    }
+        should_clauses.append({
+            "term": {
+                "address": {
+                    "value": self.address_keyword
                 }
-            })
+            }
+        })
+        
 
         query = {
             "query": {

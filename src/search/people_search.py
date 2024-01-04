@@ -53,17 +53,6 @@ class PeopleSearch():
                             "type": "custom",
                             "tokenizer": "standard",
                             "filter": ["lowercase", "asciifolding"]
-                        },
-                        "address_analyzer": {
-                            "type": "custom",
-                            "tokenizer": "comma_tokenizer",
-                            "filter": ["lowercase", "asciifolding", "trim"]
-                        }
-                    },
-                     "tokenizer": {
-                        "comma_tokenizer": {
-                            "type": "pattern",
-                            "pattern": ","  # Use a comma as the delimiter
                         }
                     }
                 }
@@ -79,8 +68,7 @@ class PeopleSearch():
                         "analyzer": "name_analyzer",
                     },
                     "address": {
-                        "type": "text",
-                        "analyzer": "address_analyzer"
+                        "type": "keyword"
                     }
                 }
             }
