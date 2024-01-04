@@ -5,8 +5,9 @@ from elasticsearch.exceptions import NotFoundError
 
 from src.config import elastic_settings
 from src.search.query_builder import QueryBuilder
-from src.database.models import SearchLog, GPTResponse
-from src.llm.gpt_call import GPTNormalizer
+from src.database.models import SearchLog
+from src.llm.llama_normalizer import LlamaNormalizer
+from src.llm.normalizer_interface import Normalizer
 
 
 def parse_address(row):
@@ -23,7 +24,7 @@ class PeopleSearch:
         self.db = db
 
         self.es = Elasticsearch(elastic_settings.ELASTIC_URL)
-        self.gpt_normalizer = GPTNormalizer(db)
+        self.normalizer: Normalizer = LlamaNormalizer(db)
 
         self._setup_index()
         if elastic_settings.FORCE_LOAD_DATA:
@@ -87,7 +88,7 @@ class PeopleSearch:
     def _data_parse(self, fname: str):
         start_idx = 12745  # 12840
         end_idx = 12880
-        data = {}
+        data: dict = {}
 
         with open(fname, newline="", encoding="utf8") as source:
             rows = csv.DictReader(source, delimiter=";")
@@ -109,7 +110,7 @@ class PeopleSearch:
         data_arr = []
         for key_id in data:
             rnd_name_alias = data[key_id]["name"][0]
-            normalized_name = self.gpt_normalizer.gpt_name_normalize(rnd_name_alias)
+            normalized_name = self.normalizer.normalize(rnd_name_alias)
             data_arr.append(
                 {
                     "id": key_id,
@@ -122,7 +123,7 @@ class PeopleSearch:
         return data_arr
 
     def search(self, name_search_pattern, address_search_pattern=""):
-        normalized_pattern = self.gpt_normalizer.gpt_name_normalize(name_search_pattern)
+        normalized_pattern = self.normalizer.normalize(name_search_pattern)
         qb = QueryBuilder(
             name_search_pattern, address_search_pattern, normalized_pattern
         )
