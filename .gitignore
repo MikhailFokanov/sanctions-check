@@ -4,4 +4,5 @@
 *.env
 sanction_env/*
 *.json
+!.vscode/settings.json
 .mypy_cache
