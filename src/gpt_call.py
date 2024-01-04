@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import ast
 import json
+import re
 import os
 import ast
 import openai
@@ -20,14 +21,33 @@ BULK_NAMES = ['محمد يحيى معل','صالح مسفر صالح الشاع�
 
 class GPTNormalizer():
     def __init__(self, db) -> None:
-        openai.api_key = openai_settings.OPENAI_API_KEY
+        #openai.api_key = openai_settings.OPENAI_API_KEY
+        openai.api_type    = "azure"
+        openai.api_version = "2023-03-15-preview"
+        openai.api_key     = openai_settings.OPENAI_API_KEY
+        openai.api_base    = "https://ai-proxy.lab.epam.com"
         self.db = db
         
+    def _parse_model_ans(self, completion):
+        json_regex = r'\{\"name\":\s*\"[^\"]+\"\}'
+        model_answer = completion.choices[0].message.content
+        match = re.search(json_regex, model_answer)
+        parsed_json_ans = match.group(0)
+
+        logger.info(parsed_json_ans)
+
+        return parsed_json_ans
+
     def _gpt_chat_completion(self, prompt, model_name=openai_settings.OPENAI_MODEL_NAME, verbose=False):
-        chat_completion = openai.ChatCompletion.create(model=model_name, messages=[{"role": "user", "content": prompt}])
+        chat_completion = openai.ChatCompletion.create(
+            engine=model_name,
+            model=model_name, 
+            messages=[{"role": "user", "content": prompt}]
+            )
+        logger.info(chat_completion)
         if verbose:
             return chat_completion
-        return chat_completion.choices[0].message.content
+        return self._parse_model_ans(chat_completion)
 
     def _get_cached_normalization(self, name):
         res = self.db.sql_query(query=select(GPTResponse).where(GPTResponse.keyword == name))

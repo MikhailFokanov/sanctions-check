@@ -33,13 +33,14 @@ class QueryBuilder():
                 }
             })
         
-        should_clauses.append({
-            "term": {
-                "address": {
-                    "value": self.address_keyword
+        if self.address_keyword:
+            should_clauses.append({
+                "term": {
+                    "address": {
+                        "value": self.address_keyword
+                    }
                 }
-            }
-        })
+            })
         
 
         query = {

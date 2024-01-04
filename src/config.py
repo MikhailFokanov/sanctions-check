@@ -24,7 +24,10 @@ class OpenAISettings(BaseSettings):
     model_config = SettingsConfigDict(env_file=".env", extra='ignore')
 
     OPENAI_API_KEY: str
-    OPENAI_MODEL_NAME: str = 'gpt-3.5-turbo'
+    OPENAI_MODEL_NAME: str = "Llama-2-70B-chat-AWQ" 
+    # "Llama-2-70B-chat-AWQ" - for dial Llama 
+    # 'gpt-35-turbo' - for dial gpt
+    # 'gpt-3.5-turbo' - for standart gpt
 
 
 openai_settings = OpenAISettings()
