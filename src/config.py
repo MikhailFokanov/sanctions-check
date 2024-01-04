@@ -2,14 +2,14 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class ElasticSettings(BaseSettings):
-    model_config = SettingsConfigDict(env_file=".env", extra='ignore')
+    model_config = SettingsConfigDict(env_file=".env", extra="ignore")
 
     ELASTIC_URL: str
     FORCE_LOAD_DATA: bool = False
 
 
 class PostgresSettings(BaseSettings):
-    model_config = SettingsConfigDict(env_file=".env", extra='ignore')
+    model_config = SettingsConfigDict(env_file=".env", extra="ignore")
 
     POSTGRES_USER: str
     POSTGRES_DB: str
@@ -17,15 +17,15 @@ class PostgresSettings(BaseSettings):
 
     @property
     def db_uri(self):
-        return f'postgresql://{self.POSTGRES_USER}:{self.POSTGRES_PASSWORD}@localhost:5432/{self.POSTGRES_DB}'
+        return f"postgresql://{self.POSTGRES_USER}:{self.POSTGRES_PASSWORD}@localhost:5432/{self.POSTGRES_DB}"
 
 
 class OpenAISettings(BaseSettings):
-    model_config = SettingsConfigDict(env_file=".env", extra='ignore')
+    model_config = SettingsConfigDict(env_file=".env", extra="ignore")
 
     OPENAI_API_KEY: str
-    OPENAI_MODEL_NAME: str = "Llama-2-70B-chat-AWQ" 
-    # "Llama-2-70B-chat-AWQ" - for dial Llama 
+    OPENAI_MODEL_NAME: str = "Llama-2-70B-chat-AWQ"
+    # "Llama-2-70B-chat-AWQ" - for dial Llama
     # 'gpt-35-turbo' - for dial gpt
     # 'gpt-3.5-turbo' - for standart gpt
 

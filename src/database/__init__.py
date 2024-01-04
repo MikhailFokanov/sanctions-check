@@ -4,5 +4,6 @@ from .db import Database
 
 db = Database(db_url=postgres_settings.db_uri)
 
+
 def get_db():
     return db

@@ -1,8 +1,8 @@
 import openai
- 
+
 openai.api_type = "azure"
 openai.api_version = "2023-03-15-preview"
-openai.api_key = '0665d80e70914305bbbd2117c17f9ff5'
+openai.api_key = ""
 openai.api_base = "https://ai-proxy.lab.epam.com"
 
 # deployment_name = "gpt-35-turbo"
@@ -17,13 +17,10 @@ deployment_name = "Llama-2-70B-chat-AWQ"
 name = "Иван"
 message = f'Please provide english normalized name for {name}. The response MUST CONTAIN ONLY JSON LIKE THIS:  {{"name": "THE_ENGLISH_NAME_HERE"}}'
 
-print(openai.ChatCompletion.create(
-  engine=deployment_name,
-  model=deployment_name,
-  messages=[
-    {
-      "role": "user", # "assistant",
-      "content": message
-    }
-  ]
-))
+print(
+    openai.ChatCompletion.create(
+        engine=deployment_name,
+        model=deployment_name,
+        messages=[{"role": "user", "content": message}],  # "assistant",
+    )
+)

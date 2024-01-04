@@ -6,7 +6,7 @@ from sqlalchemy.engine.reflection import Inspector
 from sqlalchemy.engine import Engine
 from sqlalchemy.orm import sessionmaker
 
-from .models import Base 
+from .models import Base
 
 
 class Database:
@@ -18,7 +18,7 @@ class Database:
         self.create_tables(Base)
 
     def __new__(cls, *args, **kwargs):
-        if not hasattr(cls, 'instance'):
+        if not hasattr(cls, "instance"):
             cls.instance = super(Database, cls).__new__(cls)
         return cls.instance
 
@@ -34,7 +34,7 @@ class Database:
         declared_tables = {table.name for table in base.metadata.sorted_tables}
 
         return declared_tables.issubset(set(existing_tables))
-    
+
     def connect(self):
         self.engine = create_engine(url=self.__db_url)
         Session = sessionmaker(bind=self.engine)

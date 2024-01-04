@@ -1,0 +1,7 @@
+from abc import ABC, abstractmethod
+
+
+class INormalizer(ABC):
+    @abstractmethod
+    def normalize(self):
+        pass

@@ -9,10 +9,10 @@ class Base(DeclarativeBase):
 
 
 class SearchLog(Base):
-    __tablename__ = 'search_log'
+    __tablename__ = "search_log"
 
     id: Mapped[int] = mapped_column(primary_key=True)
-    create_date: Mapped[datetime] = mapped_column(server_default=func.now()) 
+    create_date: Mapped[datetime] = mapped_column(server_default=func.now())
     name_search_pattern: Mapped[str] = mapped_column(nullable=False)
     address_search_pattern: Mapped[str] = mapped_column(nullable=False)
     n_results: Mapped[int] = mapped_column(nullable=False)
@@ -22,9 +22,9 @@ class SearchLog(Base):
 
 
 class GPTResponse(Base):
-    __tablename__ = 'gpt_response'
+    __tablename__ = "gpt_response"
 
     id: Mapped[int] = mapped_column(primary_key=True)
-    create_date: Mapped[datetime] = mapped_column(server_default=func.now()) 
+    create_date: Mapped[datetime] = mapped_column(server_default=func.now())
     keyword: Mapped[str] = mapped_column(unique=True)
     normalized: Mapped[str] = mapped_column(nullable=False)
