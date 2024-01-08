@@ -34,7 +34,8 @@ class GPTSettings(BaseSettings):
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")
 
     OPENAI_API_KEY: str
-    OPENAI_MODEL_NAME: str = "gpt-35-turbo"
+    # OPENAI_MODEL_NAME: str = "gpt-35-turbo"
+    OPENAI_MODEL_NAME: str = "gpt-3.5-turbo"
     # 'gpt-35-turbo' - for dial gpt
     # 'gpt-3.5-turbo' - for standart gpt
 

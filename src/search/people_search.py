@@ -25,8 +25,8 @@ class PeopleSearch:
         self.db = db
 
         self.es = Elasticsearch(elastic_settings.ELASTIC_URL)
-        # self.normalizer: Normalizer = GPTNormalizer(db)
-        self.normalizer: Normalizer = LlamaNormalizer(db)
+        self.normalizer: Normalizer = GPTNormalizer(db)
+        # self.normalizer: Normalizer = LlamaNormalizer(db)
 
         self._setup_index()
         if elastic_settings.FORCE_LOAD_DATA:

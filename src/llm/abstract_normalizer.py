@@ -14,12 +14,12 @@ class Normalizer(ABC):
 
     def _chat_completion(self, prompt):
         chat_completion = openai.ChatCompletion.create(
-            engine=self.model_name,
+            # engine=self.model_name,
             model=self.model_name,
             messages=[{"role": "user", "content": prompt}],
         )
         logger.info(chat_completion)
-        return self._parse_model_ans(chat_completion)
+        return self._parse_model_ans(chat_completion.choices[0].message.content)
 
     def _get_cached_normalization(self, name):
         res = self.db.sql_query(
